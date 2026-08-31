@@ -58,6 +58,8 @@ var (
 	enums  string
 
 	modelJsonTag string
+
+	showVersion bool
 )
 
 type templateFilter struct {
@@ -102,11 +104,18 @@ func init() {
 	flag.StringVar(&tables, "tables", "", `Comma-separated list of tables to generate. Names may use shell wildcards, e.g. "user_*".`)
 	flag.StringVar(&views, "views", "", `Comma-separated list of views to generate. Names may use shell wildcards, e.g. "user_*".`)
 	flag.StringVar(&enums, "enums", "", `Comma-separated list of enums to generate. Names may use shell wildcards, e.g. "user_*".`)
+
+	flag.BoolVar(&showVersion, "version", false, "Print version.")
 }
 
 func main() {
 	flag.Usage = usage
 	flag.Parse()
+
+	if showVersion {
+		fmt.Println(version)
+		return
+	}
 
 	if dsn == "" && (source == "" || host == "" || port == 0 || user == "" || dbName == "") {
 		printErrorAndExit("ERROR: required flag(s) missing")
@@ -208,6 +217,7 @@ func usage() {
 		"skip-model", "skip-sql-builder",
 		"rel-model-path", "rel-table-path", "rel-view-path", "rel-enum-path", "tables", "views",
 		"enums",
+		"version",
 	}
 
 	for _, name := range order {
