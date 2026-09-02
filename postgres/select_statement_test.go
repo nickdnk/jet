@@ -139,4 +139,10 @@ SELECT table1.col_bool AS "table1.col_bool"
 FROM db.table1
 FOR UPDATE OF table1, table2 NOWAIT;
 `)
+	assertStatementSql(t, SELECT(table1ColBool).FROM(table1).FOR(UPDATE().OF(table1).NOWAIT(), KEY_SHARE().OF(table2)), `
+SELECT table1.col_bool AS "table1.col_bool"
+FROM db.table1
+FOR UPDATE OF table1 NOWAIT
+FOR KEY SHARE OF table2;
+`)
 }

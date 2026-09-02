@@ -56,7 +56,7 @@ type SelectStatement interface {
 	// OFFSET_e can be used when an integer expression is needed as offset, otherwise OFFSET can be used
 	OFFSET_e(offset IntegerExpression) SelectStatement
 	FETCH_FIRST(count IntegerExpression) fetchExpand
-	FOR(lock RowLock) SelectStatement
+	FOR(lock RowLock, additionalLocks ...RowLock) SelectStatement
 
 	UNION(rhs SelectStatement) SetStatement
 	UNION_ALL(rhs SelectStatement) SetStatement
@@ -179,8 +179,8 @@ func (s *selectStatementImpl) FETCH_FIRST(count IntegerExpression) fetchExpand {
 	}
 }
 
-func (s *selectStatementImpl) FOR(lock RowLock) SelectStatement {
-	s.For.Lock = lock
+func (s *selectStatementImpl) FOR(lock RowLock, additionalLocks ...RowLock) SelectStatement {
+	s.For.Locks = append([]RowLock{lock}, additionalLocks...)
 	return s
 }
 

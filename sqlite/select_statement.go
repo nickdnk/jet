@@ -49,7 +49,7 @@ type SelectStatement interface {
 	ORDER_BY(orderByClauses ...OrderByClause) SelectStatement
 	LIMIT(limit int64) SelectStatement
 	OFFSET(offset int64) SelectStatement
-	FOR(lock RowLock) SelectStatement
+	FOR(lock RowLock, additionalLocks ...RowLock) SelectStatement
 	LOCK_IN_SHARE_MODE() SelectStatement
 
 	UNION(rhs SelectStatement) SetStatement
@@ -144,8 +144,8 @@ func (s *selectStatementImpl) OFFSET(offset int64) SelectStatement {
 	return s
 }
 
-func (s *selectStatementImpl) FOR(lock RowLock) SelectStatement {
-	s.For.Lock = lock
+func (s *selectStatementImpl) FOR(lock RowLock, additionalLocks ...RowLock) SelectStatement {
+	s.For.Locks = append([]RowLock{lock}, additionalLocks...)
 	return s
 }
 
